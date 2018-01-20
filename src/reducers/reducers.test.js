@@ -50,12 +50,10 @@ const correctAnswer = 68;
 			state = reducer(state, makeGuess(6));
 			expect(state.feedback === 'Make your guess!').toEqual(false);
 		});
-		it('should have ice cold if difference is >=50', ()=>{
+		it('should change the state.feedback based on difference', ()=>{
 			let state = reducer(undefined, {type: '__UNKNOWN'});
 			state = reducer(state, makeGuess(10));
 			const difference = Math.abs(state.guesses[0] - state.correctAnswer);
-			// console.log(state.correctAnswer);
-			// console.log(state.guesses[0]);
 			if (difference >= 50) {
 				expect(state.feedback).toEqual("You're Ice Cold...");
 				console.log(state.feedback);
@@ -72,9 +70,25 @@ const correctAnswer = 68;
 	        	expect(state.feedback).toEqual('You got it!');
 				console.log(state.feedback);
 	        }
-
-
 		});
-	});
-
+	}); //end of makeGuess tests in reducer test
+	describe('generateAuralUpdate', ()=>{
+		it('should generate auralStatus in the state', ()=>{
+			let state = reducer(undefined, {type: '__UNKNOWN'});
+			state = reducer(state, makeGuess(40));
+			state = reducer(state, generateAuralUpdate());
+			expect(state.auralStatus !== undefined).toEqual(true);
+			expect(typeof(state.auralStatus)==='string').toEqual(true);
+			expect(state.auralStatus).toEqual(`Here's the status of the game right now: ${state.feedback} You've made ${state.guesses.length} guess. It was: 40`);
+		});
+		it('should do the above & differentiate based on numbers of attempts', ()=>{
+			let state = reducer(undefined, {type: '__UNKNOWN'});
+			state = reducer(state, makeGuess(40));
+			state = reducer(state, makeGuess(88));
+			state = reducer(state, generateAuralUpdate());
+			expect(state.auralStatus !== undefined).toEqual(true);
+			expect(typeof(state.auralStatus)==='string').toEqual(true);
+			expect(state.auralStatus).toEqual(`Here's the status of the game right now: ${state.feedback} You've made ${state.guesses.length} guesses. In order of most- to least-recent, they are: 88, 40`);
+		});
+	});//end of generateAuralUpdate test in reducer tests
 }); 
